@@ -1,0 +1,17 @@
+## Visual Studio / C# build artifacts
+[Bb]in/[Dd]ebug/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Temporary / Old build files
+*.old
+*.bak
+*.tmp
+
+## Keep Release binaries for GitHub raw CDN distribution
+!bin/Release/
+!bin/Release/**

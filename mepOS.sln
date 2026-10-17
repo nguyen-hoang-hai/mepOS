@@ -1,0 +1,27 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31000.000
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mepOS.Core", "src\mepOS.Core\mepOS.Core.csproj", "{A3D73C21-6A7E-4E90-B8A4-9F01B63E2D8B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mepOS.Loader", "src\mepOS.Loader\mepOS.Loader.csproj", "{B8E17A42-1234-4C56-8901-FEDCBA987654}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AnyCPU = Debug|AnyCPU
+		Release|AnyCPU = Release|AnyCPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A3D73C21-6A7E-4E90-B8A4-9F01B63E2D8B}.Debug|AnyCPU.ActiveCfg = Debug|AnyCPU
+		{A3D73C21-6A7E-4E90-B8A4-9F01B63E2D8B}.Debug|AnyCPU.Build.0 = Debug|AnyCPU
+		{A3D73C21-6A7E-4E90-B8A4-9F01B63E2D8B}.Release|AnyCPU.ActiveCfg = Release|AnyCPU
+		{A3D73C21-6A7E-4E90-B8A4-9F01B63E2D8B}.Release|AnyCPU.Build.0 = Release|AnyCPU
+		{B8E17A42-1234-4C56-8901-FEDCBA987654}.Debug|AnyCPU.ActiveCfg = Debug|AnyCPU
+		{B8E17A42-1234-4C56-8901-FEDCBA987654}.Debug|AnyCPU.Build.0 = Debug|AnyCPU
+		{B8E17A42-1234-4C56-8901-FEDCBA987654}.Release|AnyCPU.ActiveCfg = Release|AnyCPU
+		{B8E17A42-1234-4C56-8901-FEDCBA987654}.Release|AnyCPU.Build.0 = Release|AnyCPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>mepOS</Name>
+    <Assembly><![CDATA[D:\OneDrive\@ Personal Project\mepOS\bin\Debug\mepOS.Loader.dll]]></Assembly>
+    <AddInId>B7E84920-5621-4A59-8671-5085BC361902</AddInId>
+    <FullClassName>mepOS.Loader.RibbonApp</FullClassName>
+    <VendorId>MEPOS</VendorId>
+    <VendorDescription>mepOS - Swiss Clean Architectural Revit Suite</VendorDescription>
+  </AddIn>
+</RevitAddIns>

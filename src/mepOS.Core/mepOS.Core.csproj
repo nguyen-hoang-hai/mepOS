@@ -1,0 +1,74 @@
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A3D73C21-6A7E-4E90-B8A4-9F01B63E2D8B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mepOS.Core</RootNamespace>
+    <AssemblyName>mepOS.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  
+  <!-- Dynamic Revit Version Resolution -->
+  <PropertyGroup>
+    <RevitVersion Condition=" '$(RevitVersion)' == '' ">2022</RevitVersion>
+    <RevitInstallPath Condition="Exists('C:\Program Files\Autodesk\Revit $(RevitVersion)\RevitAPI.dll')">C:\Program Files\Autodesk\Revit $(RevitVersion)</RevitInstallPath>
+    <RevitInstallPath Condition="'$(RevitInstallPath)' == '' and Exists('C:\Program Files\Autodesk\Revit 2022\RevitAPI.dll')">C:\Program Files\Autodesk\Revit 2022</RevitInstallPath>
+    <RevitInstallPath Condition="'$(RevitInstallPath)' == '' and Exists('C:\Program Files\Autodesk\Revit 2024\RevitAPI.dll')">C:\Program Files\Autodesk\Revit 2024</RevitInstallPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="RevitAPI">
+      <HintPath>$(RevitInstallPath)\RevitAPI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>$(RevitInstallPath)\RevitAPIUI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="RibbonBuilder.cs" />
+    <Compile Include="Commands\BloomCommand.cs" />
+    <Compile Include="Commands\ConnectToCommand.cs" />
+    <Compile Include="Engines\BloomEngine.cs" />
+    <Compile Include="Engines\ConnectToConfig.cs" />
+    <Compile Include="Engines\ConnectToEngine.cs" />
+    <Compile Include="Engines\GeometryUtils.cs" />
+    <Compile Include="Engines\MEPSelectionFilter.cs" />
+    <Compile Include="UI\Components\SwissModal.cs" />
+  </ItemGroup>
+
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -1,0 +1,120 @@
+<Window x:Class="mepOS.Core.UI.Views.ConnectToSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="mepOS // CONNECT TO SETTINGS"
+        Width="440"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        Background="{DynamicResource WindowBgBrush}">
+
+    <Window.Resources>
+        <ResourceDictionary Source="/mepOS.Core;component/UI/Theme/SwissTheme.xaml"/>
+    </Window.Resources>
+
+    <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="2">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- Header -->
+                <RowDefinition Height="*"/>    <!-- Body -->
+                <RowDefinition Height="Auto"/> <!-- Footer -->
+            </Grid.RowDefinitions>
+
+            <!-- 1. HEADER BAR -->
+            <Border Grid.Row="0"
+                    Background="{DynamicResource SubtleBgBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,0,0,2"
+                    Padding="14,10">
+                <DockPanel LastChildFill="True">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border Background="{DynamicResource BorderBrush}" Padding="5,2" CornerRadius="2">
+                            <TextBlock Text="[CT]"
+                                       FontSize="10"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource AccentYellowBrush}"/>
+                        </Border>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="mep"
+                                   FontSize="15"
+                                   FontWeight="ExtraBold"
+                                   Foreground="{DynamicResource TextBrush}"/>
+                        <TextBlock Text="OS"
+                                   FontSize="15"
+                                   FontWeight="ExtraBold"
+                                   Foreground="{DynamicResource AccentYellowBrush}"
+                                   Margin="0,0,8,0"/>
+                        <TextBlock Text="// CONNECT TO SETTINGS"
+                                   FontSize="12"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource DimTextBrush}"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <!-- 2. BODY CONTENT -->
+            <StackPanel Grid.Row="1" Margin="14,14,14,4">
+                
+                <!-- Card 1: Alignment Tolerances -->
+                <Border Style="{DynamicResource SwissCard}">
+                    <StackPanel>
+                        <TextBlock Text="TOLERANCES // DUNG SAI KẾT NỐI" Style="{DynamicResource SwissSectionTitle}"/>
+                        
+                        <TextBlock Text="Maximum Alignment Offset (mm):" Style="{DynamicResource SwissFieldLabel}"/>
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="txtMaxOffset" Grid.Column="0" Style="{DynamicResource SwissTextBox}" Text="100"/>
+                            <TextBlock Grid.Column="1" Text="mm" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{DynamicResource MutedTextBrush}" FontWeight="Bold"/>
+                        </Grid>
+
+                        <!-- Preset Filter Pills -->
+                        <TextBlock Text="Quick Presets:" Style="{DynamicResource SwissFieldLabel}" Margin="0,4,0,4"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button x:Name="btnPreset25" Content="25 mm" Style="{DynamicResource SwissPresetButton}" Margin="0,0,6,0"/>
+                            <Button x:Name="btnPreset50" Content="50 mm" Style="{DynamicResource SwissPresetButton}" Margin="0,0,6,0"/>
+                            <Button x:Name="btnPreset100" Content="100 mm" Style="{DynamicResource SwissPresetButton}" Margin="0,0,6,0"/>
+                            <Button x:Name="btnPreset200" Content="200 mm" Style="{DynamicResource SwissPresetButton}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Card 2: Routing Behavior -->
+                <Border Style="{DynamicResource SwissCard}">
+                    <StackPanel>
+                        <TextBlock Text="ROUTING BEHAVIOR // HÀNH VI ĐI TUYẾN" Style="{DynamicResource SwissSectionTitle}"/>
+                        <CheckBox x:Name="chkAllowMove"
+                                  Style="{DynamicResource SwissCheckBox}"
+                                  Content="Cho phép tịnh tiến căn thẳng hàng khi lệch trục (Auto-Align Move)"
+                                  IsChecked="True"/>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+
+            <!-- 3. FOOTER BAR -->
+            <Border Grid.Row="2"
+                    Background="{DynamicResource SubtleBgBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,2,0,0"
+                    Padding="14,10">
+                <DockPanel LastChildFill="True">
+                    <TextBlock Text="Esc to cancel"
+                               VerticalAlignment="Center"
+                               FontSize="11"
+                               Foreground="{DynamicResource MutedTextBrush}"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button x:Name="btnCancel" Content="Cancel" Style="{DynamicResource SwissGhostButton}" Margin="0,0,10,0"/>
+                        <Button x:Name="btnSave" Content="Save Settings" Style="{DynamicResource SwissPrimaryButton}"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+        </Grid>
+    </Border>
+</Window>

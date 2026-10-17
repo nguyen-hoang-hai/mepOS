@@ -1,0 +1,7 @@
+﻿{
+    "releaseDate":  "2026-10-17",
+    "changelog":  "mepOS v1.0.1: Added Bloom [BL] stub generator and Connect To [CT] 3D auto-alignment",
+    "loaderDownloadUrl":  "https://raw.githubusercontent.com/nguyen-hoang-hai/mepOS/main/bin/Release/mepOS.Loader.dll",
+    "coreDownloadUrl":  "https://raw.githubusercontent.com/nguyen-hoang-hai/mepOS/main/bin/Release/mepOS.Core.dll",
+    "version":  "1.0.1"
+}
