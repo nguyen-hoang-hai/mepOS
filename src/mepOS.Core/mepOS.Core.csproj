@@ -60,6 +60,7 @@
 
   <ItemGroup>
     <Compile Include="RibbonBuilder.cs" />
+    <Compile Include="Commands\AboutCommand.cs" />
     <Compile Include="Commands\BloomCommand.cs" />
     <Compile Include="Commands\ConnectToCommand.cs" />
     <Compile Include="Engines\BloomEngine.cs" />

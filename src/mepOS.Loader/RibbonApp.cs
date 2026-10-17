@@ -136,7 +136,10 @@ namespace mepOS.Loader
                 // 5. Let mepOS.Core dynamically register any additional new tools
                 DynamicLoader.BuildCoreRibbon(application, panel, thisAssemblyPath);
 
-                // 6. Check for updates silently on background thread
+                // 6. Create Suite Brand Panel (DSCons-style wide logo banner on far right)
+                CreateBrandPanel(application, thisAssemblyPath, resourcesDir);
+
+                // 7. Check for updates silently on background thread
                 string installDir = Path.GetDirectoryName(thisAssemblyPath);
                 UpdateManager.CheckForUpdatesAsync(installDir);
 
@@ -146,6 +149,131 @@ namespace mepOS.Loader
             {
                 TaskDialog.Show("mepOS // RIBBON STARTUP ERROR", ex.Message);
                 return Result.Failed;
+            }
+        }
+
+        private static void CreateBrandPanel(UIControlledApplication application, string assemblyPath, string resourcesDir)
+        {
+            try
+            {
+                RibbonPanel brandPanel = null;
+                foreach (RibbonPanel p in application.GetRibbonPanels(TabName))
+                {
+                    if (p.Name == "mepOS" || p.Name == " ")
+                    {
+                        brandPanel = p;
+                        break;
+                    }
+                }
+
+                if (brandPanel == null)
+                {
+                    try
+                    {
+                        brandPanel = application.CreateRibbonPanel(TabName, " ");
+                    }
+                    catch
+                    {
+                        brandPanel = application.CreateRibbonPanel(TabName, "mepOS");
+                    }
+                }
+
+                var btnBannerData = new PushButtonData(
+                    "btnLogoBanner",
+                    " ",
+                    assemblyPath,
+                    "mepOS.Loader.AboutCommandProxy"
+                )
+                {
+                    ToolTip = "mepOS // Swiss Architectural MEP Suite\nVersion: Active (Auto-updating)\nClick to visit GitHub repository & documentation."
+                };
+
+                string bannerPath = Path.Combine(resourcesDir, "logo_banner.png");
+                if (File.Exists(bannerPath))
+                {
+                    btnBannerData.LargeImage = LoadBitmap(bannerPath);
+                }
+
+                brandPanel.AddItem(btnBannerData);
+
+                // Stylize banner button to hide text and ensure full-width banner display
+                StylizeBannerButton("btnLogoBanner");
+            }
+            catch
+            {
+                // Non-critical: failure to load banner should never break tool startup
+            }
+        }
+
+        private static void StylizeBannerButton(string buttonId)
+        {
+            try
+            {
+                var asm = Assembly.Load("AdWindows");
+                if (asm == null) return;
+
+                var cmType = asm.GetType("Autodesk.Windows.ComponentManager");
+                if (cmType == null) return;
+
+                var ribbonProp = cmType.GetProperty("Ribbon", BindingFlags.Public | BindingFlags.Static);
+                if (ribbonProp == null) return;
+
+                object ribbon = ribbonProp.GetValue(null, null);
+                if (ribbon == null) return;
+
+                var tabsProp = ribbon.GetType().GetProperty("Tabs");
+                if (tabsProp == null) return;
+
+                var tabs = tabsProp.GetValue(ribbon, null) as System.Collections.IEnumerable;
+                if (tabs == null) return;
+
+                foreach (object tab in tabs)
+                {
+                    var tabIdProp = tab.GetType().GetProperty("Id");
+                    string tabId = tabIdProp != null ? tabIdProp.GetValue(tab, null) as string : null;
+                    if (tabId != null && tabId.IndexOf(TabName, StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        var panelsProp = tab.GetType().GetProperty("Panels");
+                        var panels = panelsProp != null ? panelsProp.GetValue(tab, null) as System.Collections.IEnumerable : null;
+                        if (panels == null) continue;
+
+                        foreach (object panel in panels)
+                        {
+                            var sourceProp = panel.GetType().GetProperty("Source");
+                            object source = sourceProp != null ? sourceProp.GetValue(panel, null) : null;
+                            if (source == null) continue;
+
+                            var itemsProp = source.GetType().GetProperty("Items");
+                            var items = itemsProp != null ? itemsProp.GetValue(source, null) as System.Collections.IEnumerable : null;
+                            if (items == null) continue;
+
+                            foreach (object item in items)
+                            {
+                                var idProp = item.GetType().GetProperty("Id");
+                                string id = idProp != null ? idProp.GetValue(item, null) as string : null;
+                                if (id != null && id.IndexOf(buttonId, StringComparison.OrdinalIgnoreCase) >= 0)
+                                {
+                                    var showTextProp = item.GetType().GetProperty("ShowText");
+                                    if (showTextProp != null)
+                                    {
+                                        showTextProp.SetValue(item, false, null);
+                                    }
+
+                                    var widthProp = item.GetType().GetProperty("Width");
+                                    if (widthProp != null)
+                                    {
+                                        widthProp.SetValue(item, 204.0, null);
+                                    }
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Graceful fallback
             }
         }
 
