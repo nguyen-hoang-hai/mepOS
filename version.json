@@ -1,7 +1,7 @@
 ﻿{
-    "releaseDate":  "2026-10-17",
-    "changelog":  "mepOS v1.0.3: Brand banner master logo integrated with far-right docking and zero-margin titlebar",
+    "releaseDate":  "2026-10-18",
+    "changelog":  "mepOS v1.0.4: Removed brand panel and AdWindows hooks to ensure 100% native stability",
     "loaderDownloadUrl":  "https://raw.githubusercontent.com/nguyen-hoang-hai/mepOS/main/bin/Release/mepOS.Loader.dll",
     "coreDownloadUrl":  "https://raw.githubusercontent.com/nguyen-hoang-hai/mepOS/main/bin/Release/mepOS.Core.dll",
-    "version":  "1.0.3"
+    "version":  "1.0.4"
 }
