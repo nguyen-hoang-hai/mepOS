@@ -41,8 +41,8 @@ namespace RibbonBannerRenderer
                 RenderSwissArchitecturalBanner(family, "banner_concept3_swiss_badge.png", false, outDir, artifactDir);
                 RenderSwissArchitecturalBanner(family, "banner_concept3_swiss_badge_dark.png", true, outDir, artifactDir);
 
-                // Deploy Concept 1 as official logo_banner.png to Resources
-                DeployBanner("banner_concept1_dscons_style.png", outDir, resDir, binResDir, releaseResDir);
+                // Deploy Concept 2 (Right-aligned mepOS master typography) as official logo_banner.png
+                DeployBanner("banner_concept2_master_logo.png", outDir, resDir, binResDir, releaseResDir);
             }
 
             Console.WriteLine("RIBBON BANNERS GENERATED SUCCESSFULLY!");
@@ -179,8 +179,9 @@ namespace RibbonBannerRenderer
         }
 
         /// <summary>
-        /// Concept 2: Pure Horizontal Master Logo
-        /// "mep" in Black + "OS" in Yellow with stroke + "SUITE" badge
+        /// Concept 2: Pure Horizontal Master Logo (Far Right Aligned, No Version Badge)
+        /// "mep" in Black/White + "OS" in Yellow with #0A0A0A stroke
+        /// Aligned to the far right with 16px right margin, matching user preference.
         /// </summary>
         static void RenderMasterLogoBanner(FontFamily family, string fileName, bool isDark, string dir1, string dir2)
         {
@@ -197,12 +198,38 @@ namespace RibbonBannerRenderer
 
                     Color prefixColor = isDark ? Color.FromArgb(255, 255, 255, 255) : Color.FromArgb(255, 10, 10, 10);
                     Color coreYellow = Color.FromArgb(255, 255, 221, 0);
+                    Color strokeColor = Color.FromArgb(255, 10, 10, 10);
 
-                    float fontSize = 68f;
-                    float startX = 16f;
-                    float baselineY = 74f;
+                    float fontSize = 76f;
+                    float strokeWidth = 7.5f;
 
-                    // 1. Draw "mep"
+                    // 1. Measure "mep"
+                    float mepW = 0;
+                    using (GraphicsPath pMepTest = new GraphicsPath())
+                    {
+                        pMepTest.AddString("mep", family, (int)FontStyle.Bold, fontSize, new PointF(0, 0), StringFormat.GenericTypographic);
+                        mepW = pMepTest.GetBounds().Width;
+                    }
+
+                    // 2. Measure "OS"
+                    float osW = 0;
+                    using (GraphicsPath pOSTest = new GraphicsPath())
+                    {
+                        pOSTest.AddString("OS", family, (int)FontStyle.Bold, fontSize, new PointF(0, 0), StringFormat.GenericTypographic);
+                        osW = pOSTest.GetBounds().Width;
+                    }
+
+                    // Letter spacing: -0.03em
+                    float kerning = 4f;
+                    float totalW = mepW + osW - kerning + (strokeWidth / 2f);
+
+                    // 3. Right-align logo with 16px margin from right edge
+                    float rightMargin = 16f;
+                    float startX = w - rightMargin - totalW;
+                    float baselineY = 78f;
+                    float osX = startX + mepW - kerning;
+
+                    // 4. Draw "mep"
                     using (GraphicsPath pathMep = new GraphicsPath())
                     {
                         pathMep.AddString("mep", family, (int)FontStyle.Bold, fontSize, new PointF(startX, baselineY - fontSize * 0.95f), StringFormat.GenericTypographic);
@@ -212,16 +239,12 @@ namespace RibbonBannerRenderer
                         }
                     }
 
-                    // 2. Measure "mep"
-                    float mepWidth = 152f;
-                    float osX = startX + mepWidth - 4f;
-
-                    // 3. Draw "OS" with paint-order: stroke fill
+                    // 5. Draw "OS" with paint-order: stroke fill
                     using (GraphicsPath pathOS = new GraphicsPath())
                     {
                         pathOS.AddString("OS", family, (int)FontStyle.Bold, fontSize, new PointF(osX, baselineY - fontSize * 0.95f), StringFormat.GenericTypographic);
 
-                        using (var pen = new Pen(Color.FromArgb(255, 10, 10, 10), 7.5f))
+                        using (var pen = new Pen(strokeColor, strokeWidth))
                         {
                             pen.LineJoin = LineJoin.Round;
                             g.DrawPath(pen, pathOS);
@@ -230,29 +253,6 @@ namespace RibbonBannerRenderer
                         using (var brush = new SolidBrush(coreYellow))
                         {
                             g.FillPath(brush, pathOS);
-                        }
-                    }
-
-                    // 4. Subtle "SUITE" or "v1.0.1" pill badge in upper right
-                    float badgeX = 310;
-                    float badgeY = 22;
-                    float badgeW = 82;
-                    float badgeH = 26;
-                    float badgeR = 6;
-
-                    using (var bBrush = new SolidBrush(Color.FromArgb(255, 244, 244, 245)))
-                    using (var bBorder = new Pen(Color.FromArgb(255, 10, 10, 10), 2f))
-                    {
-                        FillRoundRect(g, bBrush, badgeX, badgeY, badgeW, badgeH, badgeR);
-                        DrawRoundRect(g, bBorder, badgeX, badgeY, badgeW, badgeH, badgeR);
-                    }
-
-                    using (GraphicsPath pBadge = new GraphicsPath())
-                    {
-                        pBadge.AddString("v1.0.1", family, (int)FontStyle.Bold, 14f, new PointF(badgeX + 13, badgeY + 4), StringFormat.GenericTypographic);
-                        using (var brush = new SolidBrush(Color.FromArgb(255, 10, 10, 10)))
-                        {
-                            g.FillPath(brush, pBadge);
                         }
                     }
                 }

@@ -1,7 +1,7 @@
 ﻿{
     "releaseDate":  "2026-10-17",
-    "changelog":  "mepOS v1.0.2: Added mepOS Swiss Brand Signature ribbon banner (DSCons-style) and About command",
+    "changelog":  "mepOS v1.0.3: Updated mepOS banner to Concept 2: right-aligned master typography, removed version badge",
     "loaderDownloadUrl":  "https://raw.githubusercontent.com/nguyen-hoang-hai/mepOS/main/bin/Release/mepOS.Loader.dll",
     "coreDownloadUrl":  "https://raw.githubusercontent.com/nguyen-hoang-hai/mepOS/main/bin/Release/mepOS.Core.dll",
-    "version":  "1.0.2"
+    "version":  "1.0.3"
 }
