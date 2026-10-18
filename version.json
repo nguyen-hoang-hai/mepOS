@@ -1,7 +1,7 @@
 ﻿{
     "loaderDownloadUrl":  "https://raw.githubusercontent.com/nguyen-hoang-hai/mepOS/main/bin/Release/mepOS.Loader.dll",
     "version":  "1.0.5",
-    "changelog":  "mepOS v1.0.5: Frameless modern dark installer UI with DiRoots-style Revit version selection",
+    "changelog":  "mepOS v1.0.5: Expanded support to Revit 2027 and unified DiRoots-style smart UI",
     "releaseDate":  "2026-10-18",
     "coreDownloadUrl":  "https://raw.githubusercontent.com/nguyen-hoang-hai/mepOS/main/bin/Release/mepOS.Core.dll",
     "installerDownloadUrl":  "https://raw.githubusercontent.com/nguyen-hoang-hai/mepOS/main/bin/Release/mepOS_Installer.exe"
