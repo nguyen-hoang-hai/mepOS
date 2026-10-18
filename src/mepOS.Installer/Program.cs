@@ -32,6 +32,23 @@ namespace mepOS.Installer
                         InstallerCore.UninstallAll(null);
                         return;
                     }
+                    if (a.StartsWith("snapshot:"))
+                    {
+                        string outPath = arg.Substring(arg.IndexOf(':') + 1).Trim('"', '\'');
+                        using (var form = new InstallerForm())
+                        {
+                            form.StartPosition = FormStartPosition.Manual;
+                            form.Location = new Point(-2000, -2000);
+                            form.Show();
+                            Application.DoEvents();
+                            using (var bmp = new Bitmap(form.Width, form.Height))
+                            {
+                                form.DrawToBitmap(bmp, new Rectangle(0, 0, form.Width, form.Height));
+                                bmp.Save(outPath, System.Drawing.Imaging.ImageFormat.Png);
+                            }
+                        }
+                        return;
+                    }
                 }
             }
 
@@ -66,6 +83,20 @@ namespace mepOS.Installer
                 }
             }
             return detected;
+        }
+
+        public static Image LoadEmbeddedImage(string resName)
+        {
+            try
+            {
+                var asm = Assembly.GetExecutingAssembly();
+                using (var stream = asm.GetManifestResourceStream(resName))
+                {
+                    if (stream != null) return Image.FromStream(stream);
+                }
+            }
+            catch { }
+            return null;
         }
 
         public static bool ExtractEmbeddedFile(string resName, string destPath)
@@ -198,8 +229,8 @@ namespace mepOS.Installer
 
     public class InstallerForm : Form
     {
-        private Color BgDark = Color.FromArgb(16, 20, 26);
-        private Color CardDark = Color.FromArgb(24, 30, 39);
+        private Color BgDark = Color.FromArgb(14, 17, 22);
+        private Color CardDark = Color.FromArgb(22, 27, 34);
         private Color BorderDark = Color.FromArgb(48, 54, 61);
         private Color YellowAccent = Color.FromArgb(255, 221, 0);
         private Color TextMuted = Color.FromArgb(139, 148, 158);
@@ -219,8 +250,8 @@ namespace mepOS.Installer
 
         private void InitializeComponent()
         {
-            this.Text = "mepOS // One-Click Revit Installer";
-            this.Size = new Size(580, 520);
+            this.Text = "mepOS // One-Click Revit Installer (Non-Admin)";
+            this.Size = new Size(680, 620);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -228,84 +259,111 @@ namespace mepOS.Installer
             this.ForeColor = Color.White;
             this.Font = new Font("Segoe UI", 9.5f, FontStyle.Regular);
 
-            // 1. Header Panel
+            // =================================================================
+            // 1. HEADER PANEL (Swiss Architecture Master Branding)
+            // =================================================================
             var pnlHeader = new Panel
             {
                 Dock = DockStyle.Top,
-                Height = 84,
+                Height = 88,
                 BackColor = CardDark
             };
             pnlHeader.Paint += (s, e) =>
             {
+                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
                 e.Graphics.DrawLine(new Pen(BorderDark), 0, pnlHeader.Height - 1, pnlHeader.Width, pnlHeader.Height - 1);
             };
 
             var lblLogoMep = new Label
             {
                 Text = "mep",
-                Font = new Font("Segoe UI", 26f, FontStyle.Bold),
+                Font = new Font("Segoe UI", 28f, FontStyle.Bold),
                 ForeColor = Color.White,
-                Location = new Point(24, 12),
+                Location = new Point(24, 10),
                 AutoSize = true
             };
             var lblLogoOS = new Label
             {
                 Text = "OS",
-                Font = new Font("Segoe UI", 26f, FontStyle.Bold),
+                Font = new Font("Segoe UI", 28f, FontStyle.Bold),
                 ForeColor = YellowAccent,
-                Location = new Point(106, 12),
+                Location = new Point(114, 10),
                 AutoSize = true
             };
             var lblSub = new Label
             {
-                Text = "BỘ CÀI ĐẶT ADD-IN REVIT // USER-LEVEL (KHÔNG CẦN QUYỀN ADMIN)",
+                Text = "// BỘ CÀI ĐẶT ADD-IN REVIT (ZERO ADMIN • ZERO UAC • AUTO-UPDATE)",
                 Font = new Font("Segoe UI", 8.5f, FontStyle.Bold),
                 ForeColor = YellowAccent,
-                Location = new Point(26, 56),
+                Location = new Point(26, 58),
                 AutoSize = true
+            };
+
+            var lblTagBadge = new Label
+            {
+                Text = "v1.0.5 [RELEASE]",
+                Font = new Font("Consolas", 9f, FontStyle.Bold),
+                ForeColor = Color.FromArgb(88, 166, 255),
+                Location = new Point(510, 20),
+                Size = new Size(130, 24),
+                TextAlign = ContentAlignment.TopRight
+            };
+
+            var lblDot = new Label
+            {
+                Text = "● LIVE CDN",
+                Font = new Font("Consolas", 8.5f),
+                ForeColor = Color.FromArgb(63, 185, 80),
+                Location = new Point(510, 44),
+                Size = new Size(130, 20),
+                TextAlign = ContentAlignment.TopRight
             };
 
             pnlHeader.Controls.Add(lblLogoMep);
             pnlHeader.Controls.Add(lblLogoOS);
             pnlHeader.Controls.Add(lblSub);
+            pnlHeader.Controls.Add(lblTagBadge);
+            pnlHeader.Controls.Add(lblDot);
             this.Controls.Add(pnlHeader);
 
-            // 2. Info Section
-            var lblTargetTitle = new Label
+            // =================================================================
+            // 2. FEATURE TOOL SHOWCASE CARDS (Visual Demo inside Installer)
+            // =================================================================
+            var lblToolsTitle = new Label
             {
-                Text = "THƯ MỤC CÀI ĐẶT (User Application Data):",
+                Text = "CÁC CÔNG CỤ ĐƯỢC KÍCH HOẠT TRÊN TAB MEPOS:",
                 Font = new Font("Segoe UI", 8f, FontStyle.Bold),
                 ForeColor = TextMuted,
-                Location = new Point(24, 98),
+                Location = new Point(24, 102),
                 AutoSize = true
             };
-            this.Controls.Add(lblTargetTitle);
+            this.Controls.Add(lblToolsTitle);
 
-            lblPath = new Label
-            {
-                Text = InstallerCore.GetTargetDir(),
-                Font = new Font("Consolas", 9f),
-                ForeColor = Color.FromArgb(88, 166, 255),
-                Location = new Point(24, 118),
-                Size = new Size(520, 20)
-            };
-            this.Controls.Add(lblPath);
+            // Card CT (Connect To)
+            var pnlCardCt = CreateToolCard(24, 122, 300, 72, "CT_32.png", "Connect To [CT]", "Nối thông minh 2 đầu connector", "Auto-Align Collinear & Elevation 3D");
+            this.Controls.Add(pnlCardCt);
 
-            // 3. Revit Versions Selection
+            // Card BL (Bloom)
+            var pnlCardBl = CreateToolCard(338, 122, 302, 72, "BL_32.png", "Bloom [BL]", "Bung nhánh tức thì từ phụ kiện", "BFS 3-level Stub Generator cho MEP");
+            this.Controls.Add(pnlCardBl);
+
+            // =================================================================
+            // 3. TARGET PATH & REVIT CHECKLIST
+            // =================================================================
             var lblRevitTitle = new Label
             {
-                Text = "CHỌN PHIÊN BẢN REVIT CẦN KÍCH HOẠT MEPOS:",
+                Text = "CHỌN PHIÊN BẢN REVIT ĐỂ KÍCH HOẠT ADD-IN:",
                 Font = new Font("Segoe UI", 8f, FontStyle.Bold),
                 ForeColor = TextMuted,
-                Location = new Point(24, 146),
+                Location = new Point(24, 208),
                 AutoSize = true
             };
             this.Controls.Add(lblRevitTitle);
 
             clbYears = new CheckedListBox
             {
-                Location = new Point(24, 168),
-                Size = new Size(516, 124),
+                Location = new Point(24, 228),
+                Size = new Size(616, 116),
                 BackColor = CardDark,
                 ForeColor = Color.White,
                 BorderStyle = BorderStyle.FixedSingle,
@@ -316,16 +374,28 @@ namespace mepOS.Installer
             foreach (var yr in InstallerCore.SupportedYears)
             {
                 bool isDetected = detectedYears.Contains(yr);
-                string text = isDetected ? string.Format("Autodesk Revit {0}   [Đã phát hiện trên máy]", yr) : string.Format("Autodesk Revit {0}", yr);
-                clbYears.Items.Add(text, true); // Check all by default
+                string text = isDetected ? string.Format("Autodesk Revit {0}   [ĐÃ PHÁT HIỆN TRÊN MÁY]", yr) : string.Format("Autodesk Revit {0}", yr);
+                clbYears.Items.Add(text, true);
             }
             this.Controls.Add(clbYears);
 
-            // 4. Progress Section
+            lblPath = new Label
+            {
+                Text = "Đích cài đặt: " + InstallerCore.GetTargetDir() + "   (User-Level / 100% Zero UAC)",
+                Font = new Font("Consolas", 8.5f),
+                ForeColor = Color.FromArgb(88, 166, 255),
+                Location = new Point(24, 354),
+                Size = new Size(616, 20)
+            };
+            this.Controls.Add(lblPath);
+
+            // =================================================================
+            // 4. PROGRESS SECTION
+            // =================================================================
             progressBar = new ProgressBar
             {
-                Location = new Point(24, 304),
-                Size = new Size(516, 14),
+                Location = new Point(24, 380),
+                Size = new Size(616, 12),
                 Style = ProgressBarStyle.Continuous,
                 Value = 0
             };
@@ -333,21 +403,23 @@ namespace mepOS.Installer
 
             lblStatus = new Label
             {
-                Text = "Sẵn sàng cài đặt. Quá trình không yêu cầu quyền Quản trị viên (Admin).",
+                Text = "Sẵn sàng cài đặt. Bộ cài chạy trực tiếp không yêu cầu quyền Quản trị viên (Admin).",
                 Font = new Font("Segoe UI", 8.5f, FontStyle.Regular),
                 ForeColor = Color.FromArgb(201, 209, 217),
-                Location = new Point(24, 324),
-                Size = new Size(516, 24)
+                Location = new Point(24, 400),
+                Size = new Size(616, 22)
             };
             this.Controls.Add(lblStatus);
 
-            // 5. Action Buttons
+            // =================================================================
+            // 5. ACTION BUTTONS (High Contrast Architectural CTA)
+            // =================================================================
             btnInstall = new Button
             {
                 Text = "CÀI ĐẶT NGAY // INSTALL",
                 Font = new Font("Segoe UI", 10.5f, FontStyle.Bold),
-                Location = new Point(24, 362),
-                Size = new Size(320, 48),
+                Location = new Point(24, 434),
+                Size = new Size(380, 50),
                 BackColor = YellowAccent,
                 ForeColor = Color.FromArgb(10, 10, 10),
                 FlatStyle = FlatStyle.Flat,
@@ -361,8 +433,8 @@ namespace mepOS.Installer
             {
                 Text = "Gỡ cài đặt",
                 Font = new Font("Segoe UI", 9f),
-                Location = new Point(356, 362),
-                Size = new Size(184, 48),
+                Location = new Point(418, 434),
+                Size = new Size(110, 50),
                 BackColor = CardDark,
                 ForeColor = Color.FromArgb(248, 81, 73),
                 FlatStyle = FlatStyle.Flat,
@@ -374,16 +446,16 @@ namespace mepOS.Installer
 
             btnOpenFolder = new Button
             {
-                Text = "Mở thư mục Addin",
-                Font = new Font("Segoe UI", 8.5f),
-                Location = new Point(24, 424),
-                Size = new Size(160, 32),
-                BackColor = BgDark,
+                Text = "Mở Addin",
+                Font = new Font("Segoe UI", 9f),
+                Location = new Point(538, 434),
+                Size = new Size(102, 50),
+                BackColor = CardDark,
                 ForeColor = TextMuted,
                 FlatStyle = FlatStyle.Flat,
                 Cursor = Cursors.Hand
             };
-            btnOpenFolder.FlatAppearance.BorderColor = BorderDark;
+            btnOpenFolder.FlatAppearance.BorderColor = Color.FromArgb(60, 68, 77);
             btnOpenFolder.Click += (s, e) =>
             {
                 string path = InstallerCore.GetAddinsBaseDir();
@@ -393,14 +465,71 @@ namespace mepOS.Installer
 
             var lblAutoUpdateNote = new Label
             {
-                Text = "• Tự động cập nhật ngầm qua GitHub • 100% Native Ribbon • Zero UAC",
+                Text = "• Tự động kiểm tra & cập nhật ngầm qua GitHub • 100% In-Memory Dynamic Load • Không khóa DLL",
                 Font = new Font("Segoe UI", 8f),
                 ForeColor = TextMuted,
-                Location = new Point(194, 432),
-                Size = new Size(346, 20),
-                TextAlign = ContentAlignment.TopRight
+                Location = new Point(24, 504),
+                Size = new Size(616, 20),
+                TextAlign = ContentAlignment.MiddleCenter
             };
             this.Controls.Add(lblAutoUpdateNote);
+        }
+
+        private Panel CreateToolCard(int x, int y, int w, int h, string iconRes, string title, string sub1, string sub2)
+        {
+            var pnl = new Panel
+            {
+                Location = new Point(x, y),
+                Size = new Size(w, h),
+                BackColor = CardDark
+            };
+            pnl.Paint += (s, e) =>
+            {
+                e.Graphics.DrawRectangle(new Pen(BorderDark), 0, 0, w - 1, h - 1);
+            };
+
+            var pic = new PictureBox
+            {
+                Location = new Point(14, 18),
+                Size = new Size(36, 36),
+                SizeMode = PictureBoxSizeMode.CenterImage,
+                BackColor = Color.Transparent
+            };
+            var img = InstallerCore.LoadEmbeddedImage(iconRes);
+            if (img != null) pic.Image = img;
+            pnl.Controls.Add(pic);
+
+            var lblTitle = new Label
+            {
+                Text = title,
+                Font = new Font("Segoe UI", 9.5f, FontStyle.Bold),
+                ForeColor = Color.White,
+                Location = new Point(58, 12),
+                AutoSize = true
+            };
+            pnl.Controls.Add(lblTitle);
+
+            var lblSub1 = new Label
+            {
+                Text = sub1,
+                Font = new Font("Segoe UI", 8f),
+                ForeColor = YellowAccent,
+                Location = new Point(58, 32),
+                AutoSize = true
+            };
+            pnl.Controls.Add(lblSub1);
+
+            var lblSub2 = new Label
+            {
+                Text = sub2,
+                Font = new Font("Segoe UI", 7.5f),
+                ForeColor = TextMuted,
+                Location = new Point(58, 48),
+                AutoSize = true
+            };
+            pnl.Controls.Add(lblSub2);
+
+            return pnl;
         }
 
         private void BtnInstall_Click(object sender, EventArgs e)
