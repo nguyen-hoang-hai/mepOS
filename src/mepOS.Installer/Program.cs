@@ -295,15 +295,14 @@ namespace mepOS.Installer
         private Dictionary<string, CheckBox> versionCheckBoxes = new Dictionary<string, CheckBox>();
         private Panel pnlVersions;
         private Label lblRevitTitle;
-        private Label lnkToggleAllVersions;
         private Label lnkSelectAll;
+        private Label lnkSelectInstalled;
         private Label lnkDeselectAll;
         private Button btnInstall;
         private Button btnUninstall;
         private ProgressBar progressBar;
         private Label lblStatus;
         private Label lblPath;
-        private bool showAllVersions = false;
 
         public InstallerForm()
         {
@@ -392,14 +391,14 @@ namespace mepOS.Installer
             this.Controls.Add(pnlHeader);
 
             // =================================================================
-            // 2. REVIT VERSION SELECTION (DiRoots-Style Auto-Detect & Toggles)
+            // 2. REVIT VERSION SELECTION (DiRoots-Style Clean 3x3 Grid: 2019 - 2027)
             // =================================================================
             int startY = 88;
             lblRevitTitle = new Label
             {
-                Text = "PHIÊN BẢN REVIT ĐƯỢC PHÁT HIỆN:",
+                Text = "CHỌN PHIÊN BẢN REVIT ĐÍCH:",
                 Font = new Font("Segoe UI", 8.5f, FontStyle.Bold),
-                ForeColor = TextMuted,
+                ForeColor = Color.FromArgb(201, 209, 217),
                 Location = new Point(32, startY),
                 AutoSize = true
             };
@@ -407,10 +406,10 @@ namespace mepOS.Installer
 
             lnkSelectAll = new Label
             {
-                Text = "[ Chọn tất cả ]",
+                Text = "[ Tất cả ]",
                 Font = new Font("Segoe UI", 8.5f),
                 ForeColor = BlueLink,
-                Location = new Point(340, startY),
+                Location = new Point(276, startY),
                 AutoSize = true,
                 Cursor = Cursors.Hand
             };
@@ -420,12 +419,31 @@ namespace mepOS.Installer
             };
             this.Controls.Add(lnkSelectAll);
 
+            lnkSelectInstalled = new Label
+            {
+                Text = "[ Bản trên máy ]",
+                Font = new Font("Segoe UI", 8.5f),
+                ForeColor = BlueLink,
+                Location = new Point(340, startY),
+                AutoSize = true,
+                Cursor = Cursors.Hand
+            };
+            lnkSelectInstalled.Click += (s, e) =>
+            {
+                var detectedYears = InstallerCore.DetectInstalledRevitYears();
+                foreach (var kvp in versionCheckBoxes)
+                {
+                    kvp.Value.Checked = detectedYears.Contains(kvp.Key);
+                }
+            };
+            this.Controls.Add(lnkSelectInstalled);
+
             lnkDeselectAll = new Label
             {
                 Text = "[ Bỏ chọn ]",
                 Font = new Font("Segoe UI", 8.5f),
                 ForeColor = TextMuted,
-                Location = new Point(440, startY),
+                Location = new Point(450, startY),
                 AutoSize = true,
                 Cursor = Cursors.Hand
             };
@@ -437,51 +455,72 @@ namespace mepOS.Installer
 
             pnlVersions = new Panel
             {
-                Location = new Point(32, startY + 22),
-                Width = 476,
+                Location = new Point(32, startY + 24),
+                Size = new Size(476, 84),
                 BackColor = Color.Transparent
             };
             this.Controls.Add(pnlVersions);
 
-            lnkToggleAllVersions = new Label
+            // Populate all 9 supported versions (2019 - 2027) in a 3x3 grid
+            var detected = InstallerCore.DetectInstalledRevitYears();
+            int cols = 3;
+            int colW = 158;
+            for (int i = 0; i < InstallerCore.SupportedYears.Length; i++)
             {
-                Font = new Font("Segoe UI", 8f),
-                ForeColor = BlueLink,
-                AutoSize = true,
-                Cursor = Cursors.Hand
-            };
-            lnkToggleAllVersions.Click += (s, e) =>
-            {
-                showAllVersions = !showAllVersions;
-                RenderVersionCheckboxes();
-            };
-            this.Controls.Add(lnkToggleAllVersions);
+                string yr = InstallerCore.SupportedYears[i];
+                int c = i % cols;
+                int r = i / cols;
+                bool isDet = detected.Contains(yr);
+
+                var cb = new CheckBox
+                {
+                    Text = "Revit " + yr + (isDet ? " ●" : ""),
+                    Location = new Point(c * colW, r * 28),
+                    Size = new Size(colW - 8, 24),
+                    ForeColor = isDet ? Color.White : Color.FromArgb(201, 209, 217),
+                    Font = new Font("Segoe UI", 9.5f, isDet ? FontStyle.Bold : FontStyle.Regular),
+                    Checked = true, // Default to all versions checked for universal deployment
+                    Cursor = Cursors.Hand
+                };
+                pnlVersions.Controls.Add(cb);
+                versionCheckBoxes[yr] = cb;
+            }
 
             // =================================================================
             // 3. TARGET PATH & PROGRESS
             // =================================================================
+            int pathY = pnlVersions.Bottom + 12;
             lblPath = new Label
             {
                 Text = "Đích cài đặt: %APPDATA%\\mepOS  (User Data • Không cần quyền Admin)",
                 Font = new Font("Consolas", 8.5f),
                 ForeColor = BlueLink,
-                Size = new Size(480, 20)
+                Location = new Point(32, pathY),
+                Size = new Size(476, 18)
             };
             this.Controls.Add(lblPath);
 
+            int progY = pathY + 22;
             progressBar = new ProgressBar
             {
+                Location = new Point(32, progY),
                 Size = new Size(476, 5),
                 Style = ProgressBarStyle.Continuous,
                 Value = 0
             };
             this.Controls.Add(progressBar);
 
+            int statY = progY + 10;
+            string initStatus = detected.Count > 0
+                ? string.Format("Phát hiện {0} bản Revit trên máy ({1}) • Sẵn sàng cài đặt.", detected.Count, string.Join(", ", detected.ToArray()))
+                : "Sẵn sàng cài đặt add-in mepOS cho các phiên bản Revit được chọn.";
+
             lblStatus = new Label
             {
-                Text = "Sẵn sàng cài đặt add-in cho các phiên bản Revit được chọn.",
+                Text = initStatus,
                 Font = new Font("Segoe UI", 8.5f, FontStyle.Regular),
                 ForeColor = Color.FromArgb(201, 209, 217),
+                Location = new Point(32, statY),
                 Size = new Size(476, 20)
             };
             this.Controls.Add(lblStatus);
@@ -489,10 +528,12 @@ namespace mepOS.Installer
             // =================================================================
             // 4. ACTION BUTTONS (High-Contrast Clean CTA)
             // =================================================================
+            int btnY = statY + 26;
             btnInstall = new Button
             {
                 Text = "CÀI ĐẶT NGAY // INSTALL",
                 Font = new Font("Segoe UI", 10.5f, FontStyle.Bold),
+                Location = new Point(32, btnY),
                 Size = new Size(340, 46),
                 BackColor = YellowAccent,
                 ForeColor = Color.FromArgb(10, 10, 10),
@@ -507,6 +548,7 @@ namespace mepOS.Installer
             {
                 Text = "Gỡ cài đặt",
                 Font = new Font("Segoe UI", 9f),
+                Location = new Point(386, btnY),
                 Size = new Size(122, 46),
                 BackColor = Color.FromArgb(24, 28, 36),
                 ForeColor = Color.FromArgb(248, 81, 73),
@@ -517,104 +559,13 @@ namespace mepOS.Installer
             btnUninstall.Click += BtnUninstall_Click;
             this.Controls.Add(btnUninstall);
 
+            this.ClientSize = new Size(540, btnY + 46 + 22);
+
             // 1px Border around Form
             this.Paint += (s, e) =>
             {
                 e.Graphics.DrawRectangle(new Pen(BorderDark), 0, 0, this.ClientSize.Width - 1, this.ClientSize.Height - 1);
             };
-
-            // Initial render of version checkboxes
-            RenderVersionCheckboxes();
-        }
-
-        private void RenderVersionCheckboxes()
-        {
-            pnlVersions.Controls.Clear();
-            versionCheckBoxes.Clear();
-
-            var detected = InstallerCore.DetectInstalledRevitYears();
-            bool displayAll = showAllVersions || (detected.Count == 0);
-
-            if (displayAll)
-            {
-                lblRevitTitle.Text = "TẤT CẢ PHIÊN BẢN REVIT HỖ TRỢ (2019 – 2027):";
-                lnkToggleAllVersions.Text = detected.Count > 0 ? "[-] Chỉ hiển thị các phiên bản đã cài trên máy" : "";
-
-                int cols = 3;
-                int colW = 158;
-                for (int i = 0; i < InstallerCore.SupportedYears.Length; i++)
-                {
-                    string yr = InstallerCore.SupportedYears[i];
-                    int c = i % cols;
-                    int r = i / cols;
-                    bool isDet = detected.Contains(yr);
-
-                    var cb = new CheckBox
-                    {
-                        Text = "Revit " + yr + (isDet ? " ●" : ""),
-                        Location = new Point(c * colW, r * 26),
-                        Size = new Size(colW - 8, 22),
-                        ForeColor = isDet ? Color.White : TextMuted,
-                        Font = new Font("Segoe UI", 9f, isDet ? FontStyle.Bold : FontStyle.Regular),
-                        Checked = isDet || (detected.Count == 0),
-                        Cursor = Cursors.Hand
-                    };
-                    pnlVersions.Controls.Add(cb);
-                    versionCheckBoxes[yr] = cb;
-                }
-                pnlVersions.Height = (int)Math.Ceiling(InstallerCore.SupportedYears.Length / 3.0) * 26;
-            }
-            else
-            {
-                lblRevitTitle.Text = string.Format("PHÁT HIỆN {0} PHIÊN BẢN REVIT TRÊN MÁY TÍNH:", detected.Count);
-                lnkToggleAllVersions.Text = "[+] Hiển thị tất cả các phiên bản hỗ trợ (2019 – 2027)";
-
-                int col1X = 0;
-                int col2X = 246;
-                for (int i = 0; i < detected.Count; i++)
-                {
-                    string yr = detected[i];
-                    int c = i % 2;
-                    int r = i / 2;
-
-                    var cb = new CheckBox
-                    {
-                        Text = "Autodesk Revit " + yr,
-                        Location = new Point(c == 0 ? col1X : col2X, r * 28),
-                        Size = new Size(230, 24),
-                        ForeColor = Color.White,
-                        Font = new Font("Segoe UI", 9.5f, FontStyle.Bold),
-                        Checked = true,
-                        Cursor = Cursors.Hand
-                    };
-                    pnlVersions.Controls.Add(cb);
-                    versionCheckBoxes[yr] = cb;
-                }
-                pnlVersions.Height = Math.Max(28, (int)Math.Ceiling(detected.Count / 2.0) * 28);
-            }
-
-            UpdateLayoutPositions();
-        }
-
-        private void UpdateLayoutPositions()
-        {
-            int linkY = pnlVersions.Bottom + 4;
-            lnkToggleAllVersions.Location = new Point(32, linkY);
-
-            int pathY = lnkToggleAllVersions.Bottom + 12;
-            lblPath.Location = new Point(32, pathY);
-
-            int progY = pathY + 22;
-            progressBar.Location = new Point(32, progY);
-
-            int statY = progY + 10;
-            lblStatus.Location = new Point(32, statY);
-
-            int btnY = statY + 26;
-            btnInstall.Location = new Point(32, btnY);
-            btnUninstall.Location = new Point(386, btnY);
-
-            this.ClientSize = new Size(540, btnY + 46 + 22);
         }
 
         private void BtnInstall_Click(object sender, EventArgs e)
