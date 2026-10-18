@@ -10,16 +10,25 @@
 
 ---
 
-## 🚀 Cài Đặt 1-Click (Dành Cho Máy Client)
+## 🚀 Cài Đặt 1-Click (100% Không Cần Quyền Admin / Zero UAC)
 
-Chỉ cần mở **PowerShell** trên máy tính (không cần quyền Admin) và dán dòng lệnh sau:
+Bạn có thể chọn bất kỳ cách nào thuận tiện nhất dưới đây:
+
+### 🔹 Cách 1: Chạy file cài đặt trực quan (Khuyên dùng)
+Tải trực tiếp file [**mepOS_Installer.exe**](https://raw.githubusercontent.com/nguyen-hoang-hai/mepOS/main/bin/Release/mepOS_Installer.exe) (~87 KB, chạy độc lập, không cần quyền Admin) -> Nhấp đúp và bấm **"CÀI ĐẶT NGAY // INSTALL"**.
+
+### 🔹 Cách 2: Nhấp đúp tệp Batch
+Nếu tải toàn bộ mã nguồn hoặc tệp zip, chỉ cần nhấp đúp vào [**Install_mepOS.bat**](Install_mepOS.bat).
+
+### 🔹 Cách 3: Lệnh PowerShell 1 dòng
+Mở **PowerShell** (quyền người dùng bình thường, không cần Admin) và dán dòng lệnh:
 
 ```powershell
 irm https://raw.githubusercontent.com/nguyen-hoang-hai/mepOS/main/install.ps1 | iex
 ```
 
-> **Hoàn tất trong 3 giây!** Toàn bộ các phiên bản Revit (2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026) trên máy sẽ tự động nhận tab **mepOS**.  
-> **Từ lần sau:** Mọi bản vá lỗi hay công cụ mới được tác giả phát hành sẽ được Revit **tự động cập nhật ngầm** qua Internet mà không cần cài lại bất kỳ lần nào nữa.
+> **Hoàn tất trong 3 giây!** Toàn bộ các phiên bản Revit (2019 đến 2026) trên máy sẽ tự động nhận tab **mepOS**.  
+> **Từ lần sau:** Mọi bản cập nhật tính năng mới được phát hành sẽ được Revit **tự động cập nhật ngầm** qua Internet mà không bao giờ cần cài đặt lại!
 
 ---
 

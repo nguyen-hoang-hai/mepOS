@@ -1,7 +1,8 @@
 ﻿{
-    "releaseDate":  "2026-10-18",
-    "changelog":  "mepOS v1.0.5: Updated pure letter typography icons (Option A: Dual Outlined)",
     "loaderDownloadUrl":  "https://raw.githubusercontent.com/nguyen-hoang-hai/mepOS/main/bin/Release/mepOS.Loader.dll",
+    "version":  "1.0.5",
+    "changelog":  "mepOS v1.0.5: Added standalone zero-admin GUI installer (mepOS_Installer.exe) and Install_mepOS.bat",
+    "releaseDate":  "2026-10-18",
     "coreDownloadUrl":  "https://raw.githubusercontent.com/nguyen-hoang-hai/mepOS/main/bin/Release/mepOS.Core.dll",
-    "version":  "1.0.5"
+    "installerDownloadUrl":  "https://raw.githubusercontent.com/nguyen-hoang-hai/mepOS/main/bin/Release/mepOS_Installer.exe"
 }

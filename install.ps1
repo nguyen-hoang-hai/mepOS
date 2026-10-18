@@ -1,4 +1,4 @@
-﻿# ==============================================================================
+# ==============================================================================
 # mepOS — Universal One-Click Client Installer
 # Sets up mepOS in %APPDATA%\mepOS and registers addin manifest in all Revit versions
 # Usage:
@@ -12,6 +12,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor [System.Net.SecurityProtocolType]::Tls12
+try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 } catch {}
 
 $targetDir = Join-Path $env:APPDATA "mepOS"
 $targetRes = Join-Path $targetDir "Resources"
@@ -59,7 +60,7 @@ if ($Local -or $isLocalAvailable) {
     $wc.DownloadFile("$baseUrl/bin/Release/mepOS.Core.dll", (Join-Path $targetDir "mepOS.Core.dll"))
 
     # Download Icons
-    $icons = @("CT_32.png", "CT_16.png", "BL_32.png", "BL_16.png")
+    $icons = @("CT_32.png", "CT_16.png", "BL_32.png", "BL_16.png", "logo_banner.png")
     foreach ($ico in $icons) {
         try {
             $wc.DownloadFile("$baseUrl/bin/Release/Resources/$ico", (Join-Path $targetRes $ico))
