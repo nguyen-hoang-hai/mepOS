@@ -82,6 +82,7 @@ $cscArgs = @(
     "/res:$resDest\BL_32.png,BL_32.png",
     "/res:$resDest\BL_16.png,BL_16.png",
     "/res:$resDest\logo_banner.png,logo_banner.png",
+    "/res:$resDest\logo_banner_dark.png,logo_banner_dark.png",
     "/out:$installerOut",
     "$installerSrc"
 )
